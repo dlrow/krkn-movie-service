@@ -38,7 +38,7 @@ public class EnquiryController {
 		return ResponseEntity.ok("enquiry submitted successfully:");
 	}
 
-	@GetMapping(path = "/v1/getMail/receivedInterest")
+	@GetMapping(path = "/v1/mail/interest")
 	public String getMailForInterestedCandidates(
 			@RequestParam(value = "numOfDaysToConsider", required = true) String numOfDaysToConsider)
 			throws InterruptedException, IOException {

@@ -66,8 +66,8 @@ public class OtpHelper {
 		log.info("clean of OtpHelper called");
 		otpMap = new HashMap<>();
 		phoneNumberQueue = new LinkedList<>();
-		otpCountMap = new HashMap<>();
-		ipCountMap = new HashMap<>();
+		otpCountMap = new HashMap<>(20);
+		ipCountMap = new HashMap<>(20);
 		ipQueue = new LinkedList<>();
 	}
 

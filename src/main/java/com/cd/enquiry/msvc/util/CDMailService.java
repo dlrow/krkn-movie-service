@@ -8,22 +8,23 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import com.cd.enquiry.msvc.requestdto.MailObj;
+
 @Service
 public class CDMailService {
 
 	@Autowired
 	private JavaMailSender emailSender;
 
-	public void sendSimpleMessage(MailObj mail) throws MessagingException {
-		String arr[] = extractToList(mail.getTo());
-		// make it multi threaded
-		for (int i = 0; i < arr.length; i++) {
+	public void sendEmail(MailObj mail, String[] to) throws MessagingException {
+		// TODO: make it multi-threaded
+		for (int i = 0; i < to.length; i++) {
 			MimeMessage message = emailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
 			helper.setSubject(mail.getSubject());
 			helper.setText(mail.getContent());
-			helper.setTo(arr[i]);
+			helper.setTo(to[i]);
 			if (mail.getDataSource() != null)
 				helper.addAttachment("Students_Enquired_After.xls", mail.getDataSource());
 
@@ -32,8 +33,4 @@ public class CDMailService {
 
 	}
 
-	private String[] extractToList(String to) {
-		String arr[] = to.split(",");
-		return arr;
-	}
 }

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Send Interested Student Report</title>
+<link href="../static/css/cstyles.css" th:href="@{/css/cstyles.css}"
+	rel="stylesheet" />
+</head>
+<body>
+	<h2>Send Interested Student Report</h2>
+	<form method="POST"  class="sendMessages"
+		action="/sms/v1/mailExcel">
+
+		<input type="number" class="text" placeholder="days to genrate report"
+			name="numOfDaysToConsider" />
+
+		<button type="submit" class="btn" value="Submit">Send</button>
+	</form>
+
+</body>
+</html>

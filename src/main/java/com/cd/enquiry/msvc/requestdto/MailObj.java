@@ -1,4 +1,4 @@
-package com.cd.enquiry.msvc.util;
+package com.cd.enquiry.msvc.requestdto;
 
 import javax.activation.DataSource;
 

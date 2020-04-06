@@ -5,7 +5,6 @@ import static springfox.documentation.builders.PathSelectors.regex;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -23,18 +22,9 @@ public class SwaggerConfig {
 	}
 
 	private ApiInfo metaData() {
-		ApiInfo apiInfo = new ApiInfo("", "", "", "", "", "", "");
-		return apiInfo;
+		// apiInfo = new ApiInfo("", "", "", "", "", "", "");
+		return ApiInfo.DEFAULT;
 	}
 	
-	/*@Bean
-    public JavaMailSenderImpl mailSender() {
-        JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
-
-        javaMailSender.setProtocol("SMTP");
-        javaMailSender.setHost("127.0.0.1");
-        javaMailSender.setPort(587);
-
-        return javaMailSender;
-    }*/
+	
 }
