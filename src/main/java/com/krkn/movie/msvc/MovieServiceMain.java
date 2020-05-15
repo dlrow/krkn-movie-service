@@ -1,4 +1,4 @@
-package com.cd.enquiry.msvc;
+package com.krkn.movie.msvc;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,9 +7,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableSwagger2
-public class EnquiryServiceMain {
+public class MovieServiceMain {
 	public static void main(String[] args) {
-		SpringApplication.run(EnquiryServiceMain.class,args);
+		SpringApplication.run(MovieServiceMain.class,args);
 	}
 
 }

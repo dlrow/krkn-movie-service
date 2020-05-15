@@ -1,0 +1,54 @@
+@charset "ISO-8859-1";
+
+input[type="file"] {
+	display: none;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+form {
+    display: inline-block;
+}
+
+.sendMessages{
+	
+}
+
+.custom-file-upload {
+	margin: 4px 4px 4px 4px;
+	border: 1px solid #ccc;
+	display: inline-block;
+	padding: 6px 12px;
+	border-radius: 8px;
+	cursor: pointer;
+	color: white;
+	background-color: #3376FF;
+	font-size: 12px;
+}
+
+.btn {
+	margin-top: 7px;
+	border: 1px black;
+	color: white;
+	background-color: #3376FF;
+	padding: 8px 20px;
+	border-radius: 8px;
+	font-size: 12px;
+	/* font-weight: bold; */
+}
+
+.password {
+	margin-top: 7px;
+	border: 1px solid gray;
+	padding: 8px 20px;
+	border-radius: 8px;
+}
+
+.text {
+	margin-top: 7px;
+	border: 1px solid gray;
+	padding: 8px 20px;
+	border-radius: 8px;
+}

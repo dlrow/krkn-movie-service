@@ -5,12 +5,10 @@ package cd.enquiry.service;
 
 import org.junit.Test;
 
-import com.cd.enquiry.msvc.EnquiryServiceMain;
-
 public class LibraryTest {
     @Test 
     public void testSomeLibraryMethod() {
-        EnquiryServiceMain classUnderTest = new EnquiryServiceMain();
+        //EnquiryServiceMain classUnderTest = new EnquiryServiceMain();
         //assertTrue("someLibraryMethod should return 'true'", classUnderTest.someLibraryMethod());
     }
 }
