@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.krkn.movie.msvc.db.Video;
+import com.krkn.movie.msvc.db.DbVideo;
 import com.krkn.movie.msvc.service.VideoService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -44,11 +44,20 @@ public class VideoController {
 	}
 
 	@GetMapping(path = "/v1/video/title")
-	public ResponseEntity<Video> getVideoByTitle(@RequestParam(value = "title", required = true) String title)
+	public ResponseEntity<DbVideo> getVideoByTitle(@RequestParam(value = "title", required = true) String title)
 			throws InterruptedException, IOException {
 		log.debug("getVideoByTitle called : ", title);
-		Video video = videoService.getVideoByTitle(title);
+		DbVideo video = videoService.getVideoByTitle(title);
 		log.debug("getVideoByTitle finished ");
+		return ResponseEntity.ok(video);
+	}
+	
+	@GetMapping(path = "/v1/video/url")
+	public ResponseEntity<DbVideo> getVideoByURL(@RequestParam(value = "url", required = true) String url)
+			throws InterruptedException, IOException {
+		log.debug("getVideoByURL called : ", url);
+		DbVideo video = videoService.getVideoByURL(url);
+		log.debug("getVideoByURL finished ");
 		return ResponseEntity.ok(video);
 	}
 

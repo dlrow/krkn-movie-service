@@ -2,12 +2,12 @@ package com.krkn.movie.msvc.repo;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import com.krkn.movie.msvc.db.Video;
+import com.krkn.movie.msvc.db.DbVideo;
 
-public interface VideoRepository extends MongoRepository<Video, String> {
+public interface VideoRepository extends MongoRepository<DbVideo, String> {
 	
-	Video findByTitle(String title);
+	DbVideo findByTitle(String title);
 	
-	Video findByTconst(String tconst);
+	DbVideo findByTconst(String tconst);
 
 }
