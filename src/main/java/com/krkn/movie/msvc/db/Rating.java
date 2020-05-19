@@ -9,7 +9,6 @@ public class Rating {
 
 	SourceType source;
 	String rating;
-	String numOfVotes;
 
 	public Rating() {
 
@@ -19,7 +18,6 @@ public class Rating {
 		super();
 		this.source = source;
 		this.rating = rating;
-		this.numOfVotes = numOfVotes;
 	}
 
 }

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -33,8 +34,11 @@ public class VideoService implements Constants {
 	@Autowired
 	DbChannel dbChannel;
 
-	@Value("${extratext.title.prime}")
+	@Value("${pretext.title.prime}")
 	private String primePreTitle;
+	
+	@Value("${posttext.title.netflix}")
+	private String netflixPostTitle;
 
 	@Value("${omdb.url}")
 	private String omdbUrl;
@@ -55,6 +59,11 @@ public class VideoService implements Constants {
 		String title = elem.text().trim();
 		if (title.contains(primePreTitle))
 			title = title.substring(primePreTitle.length());
+		if (title.contains(netflixPostTitle)) {
+			netflixPostTitle = title.substring(title.indexOf(netflixPostTitle));
+			title = title.substring(0,title.length() - netflixPostTitle.length());
+		}
+			
 		return title;
 	}
 
@@ -81,21 +90,32 @@ public class VideoService implements Constants {
 		return result;
 	}
 
-	private DbVideo omdbResponseToDbVideoMapper(String response)
-			throws JsonMappingException, JsonProcessingException {
+	
+	//TODO: handle exception
+	private DbVideo omdbResponseToDbVideoMapper(String response) throws JsonMappingException, JsonProcessingException {
 		DbVideo dbVideo = new DbVideo();
 		JSONObject videoJson = new JSONObject(response);
-		dbVideo.setTitle(String.valueOf(videoJson.get("Title")));
-		dbVideo.setAwards(String.valueOf(videoJson.get("Awards")));
-		dbVideo.setGenre(String.valueOf(videoJson.get("Genre")));
-		dbVideo.setLanguage(String.valueOf(videoJson.get("Language")));
-		dbVideo.setPlot(String.valueOf(videoJson.get("Plot")));
-		dbVideo.setPoster(String.valueOf(videoJson.get("Poster")));
-		dbVideo.setRated(String.valueOf(videoJson.get("Rated")));
-		dbVideo.setReleasedDate(String.valueOf(videoJson.get("Released")));
-		dbVideo.setRuntime(String.valueOf(videoJson.get("Runtime")));
-		dbVideo.setYear(String.valueOf(videoJson.get("Year")));
-
+		dbVideo.setTitle(videoJson.getString("Title"));
+		dbVideo.setAwards(videoJson.getString("Awards"));
+		dbVideo.setCountry(videoJson.getString("Country"));
+		dbVideo.setGenre(videoJson.getString("Genre"));
+		dbVideo.setLanguage(videoJson.getString("Language"));
+		dbVideo.setPlot(videoJson.getString("Plot"));
+		dbVideo.setPoster(videoJson.getString("Poster"));
+		dbVideo.setRated(videoJson.getString("Rated"));
+		dbVideo.setReleasedDate(videoJson.getString("Released"));
+		dbVideo.setRuntime(videoJson.getString("Runtime"));
+		dbVideo.setYear(videoJson.getString("Year"));
+		dbVideo.setImdbVotes(videoJson.getString("imdbVotes"));
+		dbVideo.setType(VideoType.getVideoType(videoJson.getString("Type")));
+		JSONArray omdbRating = videoJson.getJSONArray("Ratings");
+		for (int i = 0; i < omdbRating.length(); ++i) {
+			JSONObject omdbrat = omdbRating.getJSONObject(i);
+			Rating dbrating = new Rating();
+			dbrating.setSource(SourceType.getSourceType(omdbrat.getString("Source")));
+			dbrating.setRating(omdbrat.getString("Value"));
+			dbVideo.getRatings().add(dbrating);
+		}
 		return dbVideo;
 	}
 
@@ -201,6 +221,10 @@ public class VideoService implements Constants {
 			}
 		});
 
+	}
+
+	public String getTitleByUrl(String url) throws IOException {
+		return extractTitle(url);
 	}
 
 }

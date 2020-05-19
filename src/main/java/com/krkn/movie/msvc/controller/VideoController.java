@@ -60,6 +60,15 @@ public class VideoController {
 		log.debug("getVideoByURL finished ");
 		return ResponseEntity.ok(video);
 	}
+	
+	@GetMapping(path = "/v1/title/url")
+	public ResponseEntity<String> gettitleByUrl(@RequestParam(value = "url", required = true) String url)
+			throws InterruptedException, IOException {
+		log.debug("getVideoByURL called : ", url);
+		String title = videoService.getTitleByUrl(url);
+		log.debug("getVideoByURL finished ");
+		return ResponseEntity.ok(title);
+	}
 
 	@ExceptionHandler(RuntimeException.class)
 	public ResponseEntity<Object> handleException(RuntimeException e) {

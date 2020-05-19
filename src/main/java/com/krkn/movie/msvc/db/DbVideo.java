@@ -28,9 +28,11 @@ public class DbVideo {
 	String plot;
 	String language;
 	String awards;
+	String country;
 	String genre;
 	String trailerLink;
 	String poster;
+	String imdbVotes;
 	VideoType type;
 	List<Rating> ratings;
 	List<DbVideo> videoIds;
