@@ -8,19 +8,25 @@ import com.krkn.movie.msvc.repo.VideoRepository;
 
 @Repository
 public class DbChannel {
+	
 	@Autowired
 	VideoRepository videoRepo;
 
 	public DbVideo getVideoByTitle(String title) {
-		return videoRepo.findByTitle(title);
+		return videoRepo.findFirstByTitleIgnoreCase(title);
 	}
 
 	public DbVideo getVideoByTconst(String tconst) {
 		return videoRepo.findByTconst(tconst);
 	}
-	
-	public DbVideo save(DbVideo video) {
-		return videoRepo.save(video);
+
+	public synchronized DbVideo save(DbVideo video) {
+		String title = video.getTitle();
+		if (this.getVideoByTitle(title) == null)
+			return videoRepo.save(video);
+		else
+			return video;
+
 	}
 
 }

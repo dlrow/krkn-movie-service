@@ -47,6 +47,7 @@ public class VideoController {
 	public ResponseEntity<DbVideo> getVideoByTitle(@RequestParam(value = "title", required = true) String title)
 			throws InterruptedException, IOException {
 		log.debug("getVideoByTitle called : ", title);
+		
 		DbVideo video = videoService.getVideoByTitle(title);
 		log.debug("getVideoByTitle finished ");
 		return ResponseEntity.ok(video);
@@ -62,9 +63,9 @@ public class VideoController {
 	}
 	
 	@GetMapping(path = "/v1/title/url")
-	public ResponseEntity<String> gettitleByUrl(@RequestParam(value = "url", required = true) String url)
+	public ResponseEntity<String> getTitleByUrl(@RequestParam(value = "url", required = true) String url)
 			throws InterruptedException, IOException {
-		log.debug("getVideoByURL called : ", url);
+		log.debug("getTitleByUrl called : ", url);
 		String title = videoService.getTitleByUrl(url);
 		log.debug("getVideoByURL finished ");
 		return ResponseEntity.ok(title);

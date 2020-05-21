@@ -24,6 +24,7 @@ import com.krkn.movie.msvc.db.DbVideo;
 import com.krkn.movie.msvc.db.Rating;
 import com.krkn.movie.msvc.db.SourceType;
 import com.krkn.movie.msvc.db.VideoType;
+import com.krkn.movie.msvc.util.SaveVideoTask;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,7 +37,7 @@ public class VideoService implements Constants {
 
 	@Value("${pretext.title.prime}")
 	private String primePreTitle;
-	
+
 	@Value("${posttext.title.netflix}")
 	private String netflixPostTitle;
 
@@ -61,9 +62,9 @@ public class VideoService implements Constants {
 			title = title.substring(primePreTitle.length());
 		if (title.contains(netflixPostTitle)) {
 			netflixPostTitle = title.substring(title.indexOf(netflixPostTitle));
-			title = title.substring(0,title.length() - netflixPostTitle.length());
+			title = title.substring(0, title.length() - netflixPostTitle.length());
 		}
-			
+
 		return title;
 	}
 
@@ -71,13 +72,18 @@ public class VideoService implements Constants {
 		if (title == null || !(title.length() > 0))
 			throw new RuntimeException("cannot extract title");
 		title = title.trim();
+		
+		if(title.contains("http"))
+			throw new RuntimeException("invalid title");
 
 		DbVideo dbVideo = dbChannel.getVideoByTitle(title);
 
 		if (dbVideo == null) {
 			String response = getOmdbResponse(title);
 			dbVideo = omdbResponseToDbVideoMapper(response);
-			dbChannel.save(dbVideo);
+			SaveVideoTask task = new SaveVideoTask(dbVideo,dbChannel);
+			task.start();
+
 		}
 		return dbVideo;
 	}
@@ -90,14 +96,16 @@ public class VideoService implements Constants {
 		return result;
 	}
 
-	
-	//TODO: handle exception
+	// TODO: handle exception
 	private DbVideo omdbResponseToDbVideoMapper(String response) throws JsonMappingException, JsonProcessingException {
 		DbVideo dbVideo = new DbVideo();
 		JSONObject videoJson = new JSONObject(response);
 		dbVideo.setTitle(videoJson.getString("Title"));
 		dbVideo.setAwards(videoJson.getString("Awards"));
+		dbVideo.setActor(videoJson.getString("Actors"));
+		dbVideo.setWriter(videoJson.getString("Writer"));
 		dbVideo.setCountry(videoJson.getString("Country"));
+		dbVideo.setDirector(videoJson.getString("Director"));
 		dbVideo.setGenre(videoJson.getString("Genre"));
 		dbVideo.setLanguage(videoJson.getString("Language"));
 		dbVideo.setPlot(videoJson.getString("Plot"));

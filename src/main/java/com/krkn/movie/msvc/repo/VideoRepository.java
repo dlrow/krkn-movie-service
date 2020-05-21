@@ -6,7 +6,7 @@ import com.krkn.movie.msvc.db.DbVideo;
 
 public interface VideoRepository extends MongoRepository<DbVideo, String> {
 	
-	DbVideo findByTitle(String title);
+	DbVideo findFirstByTitleIgnoreCase(String title);
 	
 	DbVideo findByTconst(String tconst);
 

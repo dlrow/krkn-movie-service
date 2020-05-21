@@ -26,6 +26,9 @@ public class DbVideo {
 	String releasedDate;
 	String runtime;
 	String plot;
+	String director;
+	String writer;
+	String actor;
 	String language;
 	String awards;
 	String country;
