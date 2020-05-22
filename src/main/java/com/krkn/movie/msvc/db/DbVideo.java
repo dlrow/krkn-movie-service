@@ -20,6 +20,9 @@ public class DbVideo {
 	private String tconst;
 
 	@Indexed
+	String url;
+	
+	@Indexed
 	String title;
 	String year;
 	String rated;

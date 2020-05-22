@@ -10,4 +10,6 @@ public interface VideoRepository extends MongoRepository<DbVideo, String> {
 	
 	DbVideo findByTconst(String tconst);
 
+	DbVideo findFirstByUrlIgnoreCase(String url);
+
 }

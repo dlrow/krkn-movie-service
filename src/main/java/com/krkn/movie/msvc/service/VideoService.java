@@ -41,6 +41,9 @@ public class VideoService implements Constants {
 	@Value("${posttext.title.netflix}")
 	private String netflixPostTitle;
 
+	@Value("${posttext.title.hotstar}")
+	private String hotstarPostTitle;
+
 	@Value("${omdb.url}")
 	private String omdbUrl;
 
@@ -48,10 +51,22 @@ public class VideoService implements Constants {
 	private String omdbApiKey;
 
 	public DbVideo getVideoByURL(String url) throws IOException {
-		String title = extractTitle(url);
-		DbVideo dbvideo = getVideoByTitle(title);
+		validateUrl(url);
+		DbVideo dbvideo;
+		dbvideo = dbChannel.getVideoByUrl(url);
+		if (dbvideo == null) {
+			String title = extractTitle(url);
+			dbvideo = getVideoByTitle(title, url);
+		}
 		return dbvideo;
 
+	}
+
+	private void validateUrl(String url) {
+		if (url.contains("netflix") || url.contains("primevideo") || url.contains("hotstar"))
+			return;
+		else
+			throw new RuntimeException("invalid url: " + url);
 	}
 
 	private String extractTitle(String url) throws IOException {
@@ -64,27 +79,33 @@ public class VideoService implements Constants {
 			netflixPostTitle = title.substring(title.indexOf(netflixPostTitle));
 			title = title.substring(0, title.length() - netflixPostTitle.length());
 		}
-
+		if (title.contains(hotstarPostTitle)) {
+			hotstarPostTitle = title.substring(title.indexOf(hotstarPostTitle));
+			title = title.substring(0, title.length() - hotstarPostTitle.length());
+		}
+		log.info("extracted title :" + title + " from url :" + url);
 		return title;
 	}
 
-	public DbVideo getVideoByTitle(String title) throws JsonMappingException, JsonProcessingException {
+	public DbVideo getVideoByTitle(String title, String url) throws JsonMappingException, JsonProcessingException {
 		if (title == null || !(title.length() > 0))
 			throw new RuntimeException("cannot extract title");
 		title = title.trim();
-		
-		if(title.contains("http"))
+
+		if (title.contains("http"))
 			throw new RuntimeException("invalid title");
 
 		DbVideo dbVideo = dbChannel.getVideoByTitle(title);
 
-		if (dbVideo == null) {
+		if (dbVideo != null) {
+			// setting this as the video wasn't found by url
+			dbVideo.setUrl(url);
+		} else {
 			String response = getOmdbResponse(title);
-			dbVideo = omdbResponseToDbVideoMapper(response);
-			SaveVideoTask task = new SaveVideoTask(dbVideo,dbChannel);
-			task.start();
-
+			dbVideo = omdbResponseToDbVideoMapper(response, url);
 		}
+		SaveVideoTask task = new SaveVideoTask(dbVideo, dbChannel);
+		task.start();
 		return dbVideo;
 	}
 
@@ -97,9 +118,11 @@ public class VideoService implements Constants {
 	}
 
 	// TODO: handle exception
-	private DbVideo omdbResponseToDbVideoMapper(String response) throws JsonMappingException, JsonProcessingException {
+	private DbVideo omdbResponseToDbVideoMapper(String response, String url)
+			throws JsonMappingException, JsonProcessingException {
 		DbVideo dbVideo = new DbVideo();
 		JSONObject videoJson = new JSONObject(response);
+		dbVideo.setUrl(url);
 		dbVideo.setTitle(videoJson.getString("Title"));
 		dbVideo.setAwards(videoJson.getString("Awards"));
 		dbVideo.setActor(videoJson.getString("Actors"));
