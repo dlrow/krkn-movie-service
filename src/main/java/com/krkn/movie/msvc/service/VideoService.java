@@ -83,6 +83,9 @@ public class VideoService implements Constants {
 			hotstarPostTitle = title.substring(title.indexOf(hotstarPostTitle));
 			title = title.substring(0, title.length() - hotstarPostTitle.length());
 		}
+		if (title.contains("("))
+			title = title.substring(0, title.indexOf('('));
+
 		log.info("extracted title :" + title + " from url :" + url);
 		return title;
 	}
