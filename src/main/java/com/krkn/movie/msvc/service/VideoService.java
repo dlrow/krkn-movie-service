@@ -73,15 +73,17 @@ public class VideoService implements Constants {
 		Document doc = Jsoup.connect(url).get();
 		Elements elem = doc.select("title");
 		String title = elem.text().trim();
-		if (title.contains(primePreTitle))
+		String titleExtraText = "";
+		if (title.contains(primePreTitle)) {
 			title = title.substring(primePreTitle.length());
+		}
 		if (title.contains(netflixPostTitle)) {
-			netflixPostTitle = title.substring(title.indexOf(netflixPostTitle));
-			title = title.substring(0, title.length() - netflixPostTitle.length());
+			titleExtraText = title.substring(title.indexOf(netflixPostTitle));
+			title = title.substring(0, title.length() - titleExtraText.length());
 		}
 		if (title.contains(hotstarPostTitle)) {
-			hotstarPostTitle = title.substring(title.indexOf(hotstarPostTitle));
-			title = title.substring(0, title.length() - hotstarPostTitle.length());
+			titleExtraText = title.substring(title.indexOf(hotstarPostTitle));
+			title = title.substring(0, title.length() - titleExtraText.length());
 		}
 		if (title.contains("("))
 			title = title.substring(0, title.indexOf('('));
@@ -91,12 +93,7 @@ public class VideoService implements Constants {
 	}
 
 	public DbVideo getVideoByTitle(String title, String url) throws JsonMappingException, JsonProcessingException {
-		if (title == null || !(title.length() > 0))
-			throw new RuntimeException("cannot extract title");
-		title = title.trim();
-
-		if (title.contains("http"))
-			throw new RuntimeException("invalid title");
+		title = validateTitle(title);
 
 		DbVideo dbVideo = dbChannel.getVideoByTitle(title);
 
@@ -110,6 +107,15 @@ public class VideoService implements Constants {
 		SaveVideoTask task = new SaveVideoTask(dbVideo, dbChannel);
 		task.start();
 		return dbVideo;
+	}
+
+	private String validateTitle(String title) {
+		if (title == null || !(title.length() > 0))
+			throw new RuntimeException("title is blank");
+		if (title.contains("http"))
+			throw new RuntimeException("invalid title");
+		title = title.trim();
+		return title;
 	}
 
 	private String getOmdbResponse(String title) {
