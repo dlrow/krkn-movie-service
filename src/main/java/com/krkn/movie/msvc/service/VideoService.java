@@ -3,6 +3,7 @@ package com.krkn.movie.msvc.service;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -139,6 +140,8 @@ public class VideoService implements Constants {
 		dbVideo.setCountry(videoJson.getString("Country"));
 		dbVideo.setDirector(videoJson.getString("Director"));
 		dbVideo.setGenre(videoJson.getString("Genre"));
+		dbVideo.setImdbID(videoJson.getString("imdbID"));
+		
 		dbVideo.setLanguage(videoJson.getString("Language"));
 		dbVideo.setPlot(videoJson.getString("Plot"));
 		dbVideo.setPoster(videoJson.getString("Poster"));
@@ -147,6 +150,7 @@ public class VideoService implements Constants {
 		dbVideo.setRuntime(videoJson.getString("Runtime"));
 		dbVideo.setYear(videoJson.getString("Year"));
 		dbVideo.setImdbVotes(videoJson.getString("imdbVotes"));
+		dbVideo.setDateUpdated(LocalDate.now());
 		dbVideo.setType(VideoType.getVideoType(videoJson.getString("Type")));
 		JSONArray omdbRating = videoJson.getJSONArray("Ratings");
 		for (int i = 0; i < omdbRating.length(); ++i) {

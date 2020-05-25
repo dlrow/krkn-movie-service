@@ -1,5 +1,6 @@
 package com.krkn.movie.msvc.db;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +38,10 @@ public class DbVideo {
 	String country;
 	String genre;
 	String trailerLink;
+	String imdbID;
 	String poster;
 	String imdbVotes;
+	LocalDate dateUpdated;
 	VideoType type;
 	List<Rating> ratings;
 	List<DbVideo> videoIds;
