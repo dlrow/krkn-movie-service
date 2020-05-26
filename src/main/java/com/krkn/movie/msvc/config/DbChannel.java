@@ -15,9 +15,11 @@ public class DbChannel {
 	@Autowired
 	VideoRepository videoRepo;
 
-	public DbVideo getVideoByTitle(String title) {
-		log.info("DBChannel :getVideoByTitle: " + title);
-		return videoRepo.findFirstByTitleIgnoreCase(title);
+	public DbVideo getVideoByTitleYr(String title, String year) {
+		log.info("DBChannel :getVideoByTitle: " + title + year);
+		if (year == "")
+			return videoRepo.findFirstByTitleIgnoreCase(title);
+		return videoRepo.findFirstByTitleIgnoreCaseAndYear(title, year);
 	}
 
 	public DbVideo getVideoByUrl(String url) {
@@ -31,7 +33,8 @@ public class DbChannel {
 
 	public synchronized DbVideo save(DbVideo video) {
 		String title = video.getTitle();
-		if (this.getVideoByTitle(title) == null)
+		String year = video.getYear();
+		if (this.getVideoByTitleYr(title, year) == null)
 			return videoRepo.save(video);
 		else
 			return video;

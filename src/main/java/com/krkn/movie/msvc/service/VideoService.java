@@ -9,9 +9,6 @@ import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,7 +22,9 @@ import com.krkn.movie.msvc.db.DbVideo;
 import com.krkn.movie.msvc.db.Rating;
 import com.krkn.movie.msvc.db.SourceType;
 import com.krkn.movie.msvc.db.VideoType;
+import com.krkn.movie.msvc.util.ExtractTitleYearUtil;
 import com.krkn.movie.msvc.util.SaveVideoTask;
+import com.krkn.movie.msvc.util.VideoTitleYear;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,57 +51,24 @@ public class VideoService implements Constants {
 	private String omdbApiKey;
 
 	public DbVideo getVideoByURL(String url) throws IOException {
-		validateUrl(url);
 		DbVideo dbvideo;
 		dbvideo = dbChannel.getVideoByUrl(url);
 		if (dbvideo == null) {
-			String title = extractTitle(url);
-			dbvideo = getVideoByTitle(title, url);
+			VideoTitleYear titleYr = getTitleYrByUrl(url);
+			dbvideo = getVideoByTitleYr(titleYr.getTitle(), titleYr.getYear(), url);
 		}
 		return dbvideo;
 
 	}
 
-	private void validateUrl(String url) {
-		if (url.contains("netflix") || url.contains("primevideo") || url.contains("hotstar"))
-			return;
-		else
-			throw new RuntimeException("invalid url: " + url);
-	}
-
-	private String extractTitle(String url) throws IOException {
-		Document doc = Jsoup.connect(url).get();
-		Elements elem = doc.select("title");
-		String title = elem.text().trim();
-		String titleExtraText = "";
-		if (title.contains(primePreTitle)) {
-			title = title.substring(primePreTitle.length());
-		}
-		if (title.contains(netflixPostTitle)) {
-			titleExtraText = title.substring(title.indexOf(netflixPostTitle));
-			title = title.substring(0, title.length() - titleExtraText.length());
-		}
-		if (title.contains(hotstarPostTitle)) {
-			titleExtraText = title.substring(title.indexOf(hotstarPostTitle));
-			title = title.substring(0, title.length() - titleExtraText.length());
-		}
-		if (title.contains("("))
-			title = title.substring(0, title.indexOf('('));
-
-		log.info("extracted title :" + title + " from url :" + url);
-		return title;
-	}
-
-	public DbVideo getVideoByTitle(String title, String url) throws JsonMappingException, JsonProcessingException {
+	public DbVideo getVideoByTitleYr(String title, String year, String url)
+			throws JsonMappingException, JsonProcessingException {
 		title = validateTitle(title);
 
-		DbVideo dbVideo = dbChannel.getVideoByTitle(title);
+		DbVideo dbVideo = dbChannel.getVideoByTitleYr(title, year);
 
-		if (dbVideo != null) {
-			// setting this as the video wasn't found by url
-			dbVideo.setUrl(url);
-		} else {
-			String response = getOmdbResponse(title);
+		if (dbVideo == null) {
+			String response = getOmdbResponse(title, year);
 			dbVideo = omdbResponseToDbVideoMapper(response, url);
 		}
 		SaveVideoTask task = new SaveVideoTask(dbVideo, dbChannel);
@@ -119,9 +85,10 @@ public class VideoService implements Constants {
 		return title;
 	}
 
-	private String getOmdbResponse(String title) {
+	private String getOmdbResponse(String title, String year) {
 		log.info("calling omdb api with title: " + title);
-		String url = omdbUrl + omdbApiKey + "&t=" + title;
+		String url = omdbUrl + omdbApiKey + "&t=" + title + "&y=" + year;
+		;
 		RestTemplate restTemplate = new RestTemplate();
 		String result = restTemplate.getForObject(url, String.class);
 		return result;
@@ -141,7 +108,7 @@ public class VideoService implements Constants {
 		dbVideo.setDirector(videoJson.getString("Director"));
 		dbVideo.setGenre(videoJson.getString("Genre"));
 		dbVideo.setImdbID(videoJson.getString("imdbID"));
-		
+
 		dbVideo.setLanguage(videoJson.getString("Language"));
 		dbVideo.setPlot(videoJson.getString("Plot"));
 		dbVideo.setPoster(videoJson.getString("Poster"));
@@ -267,8 +234,10 @@ public class VideoService implements Constants {
 
 	}
 
-	public String getTitleByUrl(String url) throws IOException {
-		return extractTitle(url);
+	public VideoTitleYear getTitleYrByUrl(String url) throws IOException {
+		VideoTitleYear vty = ExtractTitleYearUtil.getTitleYear(url);
+		log.info("extracted title :" + vty.getTitle() + vty.getYear() + " from url :" + url);
+		return vty;
 	}
 
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.krkn.movie.msvc.db.DbVideo;
 import com.krkn.movie.msvc.service.VideoService;
+import com.krkn.movie.msvc.util.VideoTitleYear;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,7 +46,7 @@ public class VideoController {
 			throws InterruptedException, IOException {
 		log.debug("getVideoByTitle called : ", title);
 
-		DbVideo video = videoService.getVideoByTitle(title, "");
+		DbVideo video = videoService.getVideoByTitleYr(title, "", "");
 		log.debug("getVideoByTitle finished ");
 		return ResponseEntity.ok(video);
 	}
@@ -60,12 +61,12 @@ public class VideoController {
 	}
 
 	@GetMapping(path = "/v1/title/url")
-	public ResponseEntity<String> getTitleByUrl(@RequestParam(value = "url", required = true) String url)
+	public ResponseEntity<VideoTitleYear> getTitleByUrl(@RequestParam(value = "url", required = true) String url)
 			throws InterruptedException, IOException {
 		log.debug("getTitleByUrl called : ", url);
-		String title = videoService.getTitleByUrl(url);
+		VideoTitleYear titleYr = videoService.getTitleYrByUrl(url);
 		log.debug("getVideoByURL finished ");
-		return ResponseEntity.ok(title);
+		return ResponseEntity.ok(titleYr);
 	}
 
 	@ExceptionHandler(RuntimeException.class)

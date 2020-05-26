@@ -5,9 +5,11 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import com.krkn.movie.msvc.db.DbVideo;
 
 public interface VideoRepository extends MongoRepository<DbVideo, String> {
-	
+
+	DbVideo findFirstByTitleIgnoreCaseAndYear(String title, String year);
+
 	DbVideo findFirstByTitleIgnoreCase(String title);
-	
+
 	DbVideo findByTconst(String tconst);
 
 	DbVideo findFirstByUrlIgnoreCase(String url);
