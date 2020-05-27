@@ -18,7 +18,7 @@ public class ExtractTitleYearUtil {
 		else if (url.contains("hotstar"))
 			vty = hotstarVideoTitleYear(doc);
 		else if (url.contains("netflix"))
-			vty = hotstarVideoTitleYear(doc);
+			vty = netflixVideoTitleYear(doc);
 
 		else
 			throw new RuntimeException("invalid url: " + url);
@@ -46,16 +46,26 @@ public class ExtractTitleYearUtil {
 
 	private static VideoTitleYear hotstarVideoTitleYear(Document doc) {
 		VideoTitleYear vty = new VideoTitleYear();
-		Elements h1Elements = doc.select("h1");
-		Elements spanElements = doc.select("span");
-		for (Element h1 : h1Elements) {
-			if (String.valueOf(h1.attributes()).contains("title"))
-				vty.setTitle(h1.text());
+		Elements titleElements = doc.getElementsByAttributeValueContaining("class", "toptitle clear-both");
+		Elements yearElement = doc.getElementsByAttributeValueContaining("class", "meta-data");
+		vty.setTitle(titleElements.text());
+
+		for (Element span : yearElement) {
+			if (String.valueOf(span.text()).matches("^(19|20)\\d{2}$"))
+				vty.setYear(span.text());
 
 		}
+		return vty;
+	}
 
-		for (Element span : spanElements) {
-			if (String.valueOf(span.attributes()).contains("release-year-badge"))
+	private static VideoTitleYear netflixVideoTitleYear(Document doc) {
+		VideoTitleYear vty = new VideoTitleYear();
+		Elements titleElements = doc.getElementsByAttributeValueContaining("class", "title-title");
+		Elements yearElement = doc.getElementsByAttributeValueContaining("class", "item-year");
+		vty.setTitle(titleElements.text());
+
+		for (Element span : yearElement) {
+			if (String.valueOf(span.text()).matches("^(19|20)\\d{2}$"))
 				vty.setYear(span.text());
 
 		}
