@@ -90,6 +90,10 @@ public class VideoService implements Constants {
 		String url = omdbUrl + omdbApiKey + "&t=" + title + "&y=" + year;
 		RestTemplate restTemplate = new RestTemplate();
 		String result = restTemplate.getForObject(url, String.class);
+		if(result.contains("Response\":\"False")) {
+			url =  omdbUrl + omdbApiKey + "&t=" + title ;
+			result = restTemplate.getForObject(url, String.class);		
+		}
 		return result;
 	}
 
