@@ -12,13 +12,13 @@ public class ExtractTitleYearUtil {
 	public static VideoTitleYear getTitleYear(String url) throws IOException {
 
 		VideoTitleYear vty = null;
-		Document doc = Jsoup.connect(url).get();
+		
 		if (url.contains("primevideo"))
-			vty = primeVideoTitleYear(doc);
+			vty = primeVideoTitleYear(url);
 		else if (url.contains("hotstar"))
-			vty = hotstarVideoTitleYear(doc);
+			vty = hotstarVideoTitleYear(url);
 		else if (url.contains("netflix"))
-			vty = netflixVideoTitleYear(doc);
+			vty = netflixVideoTitleYear(url);
 
 		else
 			throw new RuntimeException("invalid url: " + url);
@@ -26,7 +26,8 @@ public class ExtractTitleYearUtil {
 		return vty;
 	}
 
-	private static VideoTitleYear primeVideoTitleYear(Document doc) {
+	private static VideoTitleYear primeVideoTitleYear(String url) throws IOException {
+		Document doc = Jsoup.connect(url).get();
 		VideoTitleYear vty = new VideoTitleYear();
 		Elements h1Elements = doc.select("h1");
 		Elements spanElements = doc.select("span");
@@ -44,7 +45,8 @@ public class ExtractTitleYearUtil {
 		return vty;
 	}
 
-	private static VideoTitleYear hotstarVideoTitleYear(Document doc) {
+	private static VideoTitleYear hotstarVideoTitleYear(String url) throws IOException {
+		Document doc = Jsoup.connect(url).get();
 		VideoTitleYear vty = new VideoTitleYear();
 		Elements titleElements = doc.getElementsByAttributeValueContaining("class", "toptitle clear-both");
 		Elements yearElement = doc.getElementsByAttributeValueContaining("class", "meta-data");
@@ -58,7 +60,8 @@ public class ExtractTitleYearUtil {
 		return vty;
 	}
 
-	private static VideoTitleYear netflixVideoTitleYear(Document doc) {
+	private static VideoTitleYear netflixVideoTitleYear(String url) throws IOException {
+		Document doc = Jsoup.connect(url).get();
 		VideoTitleYear vty = new VideoTitleYear();
 		Elements titleElements = doc.getElementsByAttributeValueContaining("class", "title-title");
 		Elements yearElement = doc.getElementsByAttributeValueContaining("class", "item-year");

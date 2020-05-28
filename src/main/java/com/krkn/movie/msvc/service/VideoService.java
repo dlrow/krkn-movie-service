@@ -88,7 +88,6 @@ public class VideoService implements Constants {
 	private String getOmdbResponse(String title, String year) {
 		log.info("calling omdb api with title: " + title);
 		String url = omdbUrl + omdbApiKey + "&t=" + title + "&y=" + year;
-		;
 		RestTemplate restTemplate = new RestTemplate();
 		String result = restTemplate.getForObject(url, String.class);
 		return result;
