@@ -12,7 +12,7 @@ public class ExtractTitleYearUtil {
 	public static VideoTitleYear getTitleYear(String url) throws IOException {
 
 		VideoTitleYear vty = null;
-		
+
 		if (url.contains("primevideo"))
 			vty = primeVideoTitleYear(url);
 		else if (url.contains("hotstar"))
@@ -51,12 +51,20 @@ public class ExtractTitleYearUtil {
 		Elements titleElements = doc.getElementsByAttributeValueContaining("class", "toptitle clear-both");
 		Elements yearElement = doc.getElementsByAttributeValueContaining("class", "meta-data");
 		vty.setTitle(titleElements.text());
+		if (titleElements.size() == 0)
+			vty.setTitle(doc.select("h1").text());
 
 		for (Element span : yearElement) {
-			if (String.valueOf(span.text()).matches("^(19|20)\\d{2}$"))
-				vty.setYear(span.text());
+			Elements spanChild = span.getAllElements();
+			for (Element e : spanChild) {
+				if (String.valueOf(e.text()).matches("^(19|20)\\d{2}$")) {
+					vty.setYear(e.text());
+					return vty;
+				}
+			}
 
 		}
+
 		return vty;
 	}
 
