@@ -32,8 +32,10 @@ public class ExtractTitleYearUtil {
 		Elements h1Elements = doc.select("h1");
 		Elements spanElements = doc.select("span");
 		for (Element h1 : h1Elements) {
-			if (String.valueOf(h1.attributes()).contains("title"))
+			if (String.valueOf(h1.attributes()).contains("title")) {
 				vty.setTitle(h1.text());
+				break;
+			}
 
 		}
 
