@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.krkn.movie.msvc.db.Crew;
-import com.krkn.movie.msvc.db.DbVideo;
+import com.krkn.movie.msvc.db.DbRating;
 import com.krkn.movie.msvc.db.Rating;
 import com.krkn.movie.msvc.db.Review;
 import com.krkn.movie.msvc.db.VideoType;
@@ -28,7 +28,7 @@ public class VideoDTO {
 	Integer time;
 	VideoType type;
 	List<Rating> ratings;
-	List<DbVideo> videoIds;
+	List<DbRating> videoIds;
 	List<Crew> crews;
 	List<Review> reviewIds;
 

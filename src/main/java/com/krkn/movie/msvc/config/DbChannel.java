@@ -1,10 +1,15 @@
 package com.krkn.movie.msvc.config;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import com.krkn.movie.msvc.db.DbVideo;
-import com.krkn.movie.msvc.repo.VideoRepository;
+import com.krkn.movie.msvc.db.DbRating;
+import com.krkn.movie.msvc.repo.RatingRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,32 +18,46 @@ import lombok.extern.slf4j.Slf4j;
 public class DbChannel {
 
 	@Autowired
-	VideoRepository videoRepo;
+	RatingRepository ratingRepo;
 
-	public DbVideo getVideoByTitleYr(String title, String year) {
-		log.info("DBChannel :getVideoByTitle: " + title + year);
+	public List<DbRating> getDbRatingPageSortedBy(int pageNo, int pageSize) {
+		Pageable paging = PageRequest.of(pageNo, pageSize);
+		Page<DbRating> pagedResult = ratingRepo.findAll(paging);
+		return pagedResult.getContent();
+	}
+
+	public List<DbRating> getAllRatings() {
+		return ratingRepo.findAll();
+	}
+
+	public DbRating getRatingByTitleYr(String title, String year) {
+		log.info("DBChannel :getRatingByTitleYr: " + title + year);
 		if (year == "")
-			return videoRepo.findFirstByTitleIgnoreCase(title);
-		return videoRepo.findFirstByTitleIgnoreCaseAndYear(title, year);
+			return ratingRepo.findFirstByTitleIgnoreCase(title);
+		return ratingRepo.findFirstByTitleIgnoreCaseAndYear(title, year);
 	}
 
-	public DbVideo getVideoByUrl(String url) {
+	public DbRating getRatingByUrl(String url) {
 		log.info("DBChannel :getVideoByUrl: " + url);
-		return videoRepo.findFirstByUrlIgnoreCase(url);
+		return ratingRepo.findFirstByUrlIgnoreCase(url);
 	}
 
-	public DbVideo getVideoByTconst(String tconst) {
-		return videoRepo.findByTconst(tconst);
+	public DbRating getVideoByTconst(String tconst) {
+		return ratingRepo.findByImdbID(tconst);
 	}
 
-	public synchronized DbVideo save(DbVideo video) {
-		String title = video.getTitle();
-		String year = video.getYear();
-		if (this.getVideoByTitleYr(title, year) == null)
-			return videoRepo.save(video);
+	public synchronized DbRating saveWithDuplicateCheck(DbRating rating) {
+		String title = rating.getTitle();
+		String year = rating.getYear();
+		if (this.getRatingByTitleYr(title, year) == null)
+			return ratingRepo.save(rating);
 		else
-			return video;
+			return rating;
 
+	}
+
+	public DbRating updateRating(DbRating rating) {
+		return ratingRepo.save(rating);
 	}
 
 }

@@ -1,5 +1,5 @@
 package com.krkn.movie.msvc.constants;
 
 public interface Constants {
-	Integer CHUNKN_SIZE = 100;
+	Integer CHUNK_SIZE = 100;
 }

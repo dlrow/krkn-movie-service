@@ -1,4 +1,4 @@
-package com.krkn.movie.msvc.util;
+package com.krkn.movie.msvc.pojo;
 
 import lombok.Data;
 

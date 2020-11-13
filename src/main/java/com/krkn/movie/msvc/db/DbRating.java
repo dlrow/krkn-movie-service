@@ -13,8 +13,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
-@Document(collection = "video")
-public class DbVideo {
+@Document(collection = "rating")
+public class DbRating {
 
 	@Id
 	@JsonIgnore
@@ -44,12 +44,12 @@ public class DbVideo {
 	LocalDate dateUpdated;
 	VideoType type;
 	List<Rating> ratings;
-	List<DbVideo> videoIds;
+	List<DbRating> videoIds;
 	List<Crew> crews;
 	List<Review> reviewIds;
 
 	// List<Languages> languages;
-	public DbVideo() {
+	public DbRating() {
 		ratings = new ArrayList<Rating>();
 	}
 
